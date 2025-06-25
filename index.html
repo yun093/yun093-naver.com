@@ -177,15 +177,14 @@
         let gameStarted = false, characterSize = 30, runningAnimationCount = 0;
         
         const DEFAULT_CHARACTER_IMAGES = [
-            'https://i.imgur.com/5Jz8Z2Q.png',
-            'https://i.imgur.com/T0a4dFk.png',
-            'https://i.imgur.com/sAVk5O6.png',
-            'https://i.imgur.com/q1n5m4W.png',
-            'https://i.imgur.com/2Y44g6e.png',
-            'https://i.imgur.com/R3x3a2D.png',
-            'https://i.imgur.com/b5J2xEz.png',
-            'https://i.imgur.com/E5J0K8m.png',
-        ];
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg',
+    'https://i.postimg.cc/KYCscZGH/ts.jpg'        ];
 
         const synth = typeof Tone !== 'undefined' ? new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination() : null;
         const playWinSound = () => {
