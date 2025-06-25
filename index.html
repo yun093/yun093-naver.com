@@ -177,14 +177,14 @@
         let gameStarted = false, characterSize = 30, runningAnimationCount = 0;
         
         const DEFAULT_CHARACTER_IMAGES = [
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg',
-    'https://i.postimg.cc/KYCscZGH/ts.jpg'        ];
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/wxm5zg61/01.png,
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',
+            'https://i.postimg.cc/KYCscZGH/ts.jpg'        ];
 
         const synth = typeof Tone !== 'undefined' ? new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination() : null;
         const playWinSound = () => {
@@ -253,7 +253,7 @@
         const updatePlayerCount = (change) => {
             if (runningAnimationCount > 0) return;
             const newCount = playerCount + change;
-            if (newCount >= 2 && newCount <= 8) {
+            if (newCount >= 2 && newCount <= 24) {
                 playerCount = newCount;
                 elements.playerCountSpan.textContent = `${newCount}명`;
                 resetGame();
