@@ -178,13 +178,13 @@
         
         const DEFAULT_CHARACTER_IMAGES = [
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
-            'https://i.postimg.cc/wxm5zg61/01.png,
+            'https://i.postimg.cc/wxm5zg61/01.png,,
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
             'https://i.postimg.cc/KYCscZGH/ts.jpg',
-            'https://i.postimg.cc/KYCscZGH/ts.jpg'        ];
+            'https://i.postimg.cc/KYCscZGH/ts.jpg',        ];
 
         const synth = typeof Tone !== 'undefined' ? new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination() : null;
         const playWinSound = () => {
