@@ -99,19 +99,17 @@
                      <input type="range" id="characterSize" min="10" max="50" value="30" class="w-full">
                 </div>
                  <div>
-                    <label for="background-input" class="btn bg-white text-gray-700 font-bold py-2 px-4 rounded-lg cursor-pointer">🖼️ 배경 변경</label>
-                    <input type="file" id="background-input" class="hidden" accept="image/*">
-                </div>
+                     <label for="background-input" class="btn bg-white text-gray-700 font-bold py-2 px-4 rounded-lg cursor-pointer">🖼️ 배경 변경</label>
+                     <input type="file" id="background-input" class="hidden" accept="image/*">
+                 </div>
             </div>
             
             <fieldset class="border-2 border-dashed border-rose-300 p-4 rounded-lg mb-4">
-                <legend class="px-2 text-lg font-semibold text-rose-500">🎉 당첨자 설정</legend>
+                <legend class="px-2 text-lg font-semibold text-rose-500">🎉 당첨 설정</legend>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
-                    <label class="font-medium">누가:</label>
-                    <select id="winner-select" class="p-2 border border-gray-300 rounded-md"></select>
-                    <label class="font-medium">어디에:</label>
+                    <label class="font-medium">어디가</label>
                     <select id="target-result-select" class="p-2 border border-gray-300 rounded-md"></select>
-                    <label class="font-medium">도착할까요?</label>
+                    <label class="font-medium">'당첨'인가요?</label>
                 </div>
                 <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
                     <input type="text" id="winner-message" placeholder="당첨 메시지 (예: 축하합니다!)" class="flex-grow p-2 border border-gray-300 rounded-md">
@@ -164,8 +162,8 @@
             resultList: document.getElementById('result-list'),
             shareButton: document.getElementById('shareButton'), downloadButton: document.getElementById('downloadButton'),
             backgroundInput: document.getElementById('background-input'), toast: document.getElementById('toast'),
-            captureArea: document.getElementById('capture-area'), winnerSelect: document.getElementById('winner-select'),
-            targetResultSelect: document.getElementById('target-result-select'), // [NEW] 결과 선택 드롭다운
+            captureArea: document.getElementById('capture-area'),
+            targetResultSelect: document.getElementById('target-result-select'),
             winnerMessage: document.getElementById('winner-message'), winnerFile: document.getElementById('winner-file'),
             winnerFilePreview: document.getElementById('winner-file-preview'), winnerModal: document.getElementById('winner-modal'),
             winnerPrizeDisplay: document.getElementById('winner-prize-display'), closeWinnerModal: document.getElementById('close-winner-modal'),
@@ -178,12 +176,15 @@
         let animationFrameId = null, designatedWinnerEndIndex = -1;
 
         const DEFAULT_CHARACTER_IMAGES = [
-            'https://i.postimg.cc/mkc5LMpK/ts.jpg', 'https://i.postimg.cc/zvKTFSdC/01.png', 'https://i.postimg.cc/wxm5zg61/01.png',
-            'https://i.postimg.cc/m23Qcj1R/01.png', 'https://i.postimg.cc/8PgRP95t/01-11.png', 'https://i.postimg.cc/13JwBzKj/01.png',
-            'https://i.postimg.cc/bv5bXFW0/01.png', 'https://i.postimg.cc/cJCYbN94/01.png', 'https://i.postimg.cc/CxFbb8b8/01.png',
-            'https://i.postimg.cc/RFntvLxk/01.png', 'https://i.postimg.cc/rs1trymg/03.png', 'https://i.postimg.cc/0jRwjK8b/ts112.png'
+            'https://i.postimg.cc/mkc5LMpK/ts.jpg', 'https://i.postimg.cc/zvKTFSdC/01.png', 'https://i.postimg.cc/m23Qcj1R/01.png',
+            'https://i.postimg.cc/YCFddz7B/image.png', 'https://i.postimg.cc/0QkZ2gw9/03.png', 'https://i.postimg.cc/28f1qqxg/image.png',
+            'https://i.postimg.cc/xTR1c68b/image.png', 'https://i.postimg.cc/bwwNb1SV/image.png', 'https://i.postimg.cc/wBtq4HVh/image.jpg',
+            'https://i.postimg.cc/zf9J9Mt4/image.jpg', 'https://i.postimg.cc/DZkTCGmT/81mm.png', 'https://i.postimg.cc/W1yjkCvt/81mm.png',
+            'https://i.postimg.cc/HL7m4zYz/81mm.png', 'https://i.postimg.cc/nztyKtwV/songsan-TS-bouncy.gif', 'https://i.postimg.cc/X7H6RmXx/image.png',
+            'https://i.postimg.cc/3RXHzwDD/image.png', 'https://i.postimg.cc/hvKqnq9Z/image.png', 'https://i.postimg.cc/KzrdJsdP/TS.png',
+            'https://i.postimg.cc/rpW6tpjY/ts.png', 'https://i.postimg.cc/y824dRmZ/81mm.png', 'https://i.postimg.cc/3JJHbYrd/image.png',
+            'https://i.postimg.cc/nhXfp2Dx/TS.png', 'https://i.postimg.cc/NFsZVkcW/TS.jpg'
         ];
-
         const synth = typeof Tone !== 'undefined' ? new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination() : null;
         const playWinSound = () => { if (synth) Tone.start().then(() => synth.triggerAttackRelease("C5", "8n", Tone.now())); };
         const playSpecialWinSound = () => {
@@ -208,8 +209,7 @@
             elements.canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
             
-            // [FIX] 간격을 고려한 너비 계산 및 폰트 자동 조절
-            const gap = 4; // 항목 간 간격 (px)
+            const gap = 4;
             const totalGapWidth = (playerCount - 1) * gap;
             const columnWidth = (elements.canvas.clientWidth - totalGapWidth) / playerCount;
             
@@ -234,7 +234,7 @@
 
         const createInputs = () => {
             elements.playerInputs.innerHTML = ''; elements.resultInputs.innerHTML = '';
-            elements.winnerSelect.innerHTML = ''; elements.targetResultSelect.innerHTML = '';
+            elements.targetResultSelect.innerHTML = '';
             
             for (let i = 0; i < playerCount; i++) {
                 const defaultImage = DEFAULT_CHARACTER_IMAGES[i % DEFAULT_CHARACTER_IMAGES.length];
@@ -260,13 +260,7 @@
                         reader.readAsDataURL(file);
                     }
                 });
-                 
-                const playerInputEl = playerDiv.querySelector(`#player${i}`);
-                playerInputEl.addEventListener('input', (e) => {
-                    const optionToUpdate = elements.winnerSelect.querySelector(`option[value="${i}"]`);
-                    if (optionToUpdate) optionToUpdate.textContent = e.target.value || `참여자 ${i + 1}`;
-                });
-
+                
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'input-item result';
                 resultDiv.innerHTML = `<input id="result${i}" type="text" value="${resultName}" class="w-full text-center p-1 border border-gray-300 rounded-md text-sm">`;
@@ -277,16 +271,12 @@
                     const optionToUpdate = elements.targetResultSelect.querySelector(`option[value="${i}"]`);
                     if (optionToUpdate) optionToUpdate.textContent = e.target.value || `결과 ${i + 1}`;
                 });
-
-                const winnerOption = document.createElement('option');
-                winnerOption.value = i; winnerOption.textContent = playerName;
-                elements.winnerSelect.appendChild(winnerOption);
                 
                 const targetOption = document.createElement('option');
                 targetOption.value = i; targetOption.textContent = resultName;
                 elements.targetResultSelect.appendChild(targetOption);
             }
-            // [MODIFIED] 가운데를 '당첨'으로 고정하는 로직 대신, 사용자가 직접 결과를 입력하도록 함
+
             if (playerCount > 1) {
                 const midIndex = Math.floor(playerCount / 2);
                 document.getElementById(`result${midIndex}`).value = "당첨";
@@ -333,35 +323,14 @@
             horizontalLines = [];
             const ladderData = Array(verticalLines).fill(0).map(() => Array(horizontalSteps).fill(0));
         
-            // [MODIFIED] '누가', '어디에' 드롭다운 값을 기준으로 경로 생성
-            const winnerStartIndex = parseInt(elements.winnerSelect.value, 10);
-            const winnerEndIndex = parseInt(elements.targetResultSelect.value, 10);
-            
-            const availableY = Array.from({length: horizontalSteps - 2}, (_, i) => i + 1).sort(() => 0.5 - Math.random());
-            
-            let currentX = winnerStartIndex;
-            let movesNeeded = winnerEndIndex - currentX;
-            const direction = Math.sign(movesNeeded);
-
-            if (direction !== 0) {
-                for (const y of availableY) {
-                    if (movesNeeded === 0) break;
-                    const nextX = currentX + direction;
-                    if (ladderData[currentX][y] === 0 && ladderData[nextX] && ladderData[nextX][y] === 0) {
-                        ladderData[currentX][y] = direction;
-                        ladderData[nextX][y] = -direction;
-                        currentX = nextX;
-                        movesNeeded -= direction;
-                    }
-                }
-            }
-
+            // 완전 무작위로 가로줄 생성
             for (let y = 1; y < horizontalSteps - 1; y++) {
                 for (let x = 0; x < verticalLines - 1; x++) {
                     if (ladderData[x][y] === 0 && ladderData[x + 1][y] === 0) {
+                        // 바로 위나 아래에 가로줄이 겹치지 않도록 방지
                         const isNeighborSafe = (y > 0 ? ladderData[x][y - 1] === 0 && ladderData[x + 1][y - 1] === 0 : true) &&
-                                               (y < horizontalSteps -1 ? ladderData[x][y + 1] === 0 && ladderData[x + 1][y + 1] === 0 : true);
-                        if (isNeighborSafe && Math.random() > 0.65) {
+                                             (y < horizontalSteps -1 ? ladderData[x][y + 1] === 0 && ladderData[x + 1][y + 1] === 0 : true);
+                        if (isNeighborSafe && Math.random() > 0.65) { // 확률 조절
                             ladderData[x][y] = 1;
                             ladderData[x + 1][y] = -1;
                         }
@@ -412,7 +381,7 @@
             if (gameStarted) return;
             playerNames = Array.from({length: playerCount}, (_, i) => document.getElementById(`player${i}`).value);
             resultNames = Array.from({length: playerCount}, (_, i) => document.getElementById(`result${i}`).value);
-            designatedWinnerEndIndex = parseInt(elements.targetResultSelect.value, 10); // [NEW] 당첨 결과 위치 저장
+            designatedWinnerEndIndex = parseInt(elements.targetResultSelect.value, 10);
             elements.startButton.innerHTML = "<span>로딩중...</span>"; elements.startButton.disabled = true;
 
             const onImagesReady = () => {
@@ -519,8 +488,8 @@
                             if (ladder[this.currentXIndex] && ladder[this.currentXIndex][y] !== 0) {
                                 const rungYPos = (y + 1.5) * ladderYStep;
                                 if (rungYPos > this.y) {
-                                   nextRungYIndex = y;
-                                   break;
+                                    nextRungYIndex = y;
+                                    break;
                                 }
                             }
                         }
@@ -577,68 +546,87 @@
             if(endIndex === designatedWinnerEndIndex) {
                 const winnerName = playerNames[startIndex];
                 const prizeMessage = elements.winnerMessage.value || '축하합니다! 당첨!';
-                let prizeHTML = `<h3 class="text-3xl font-bold mb-2 text-rose-500">${winnerName}</h3>`;
-                if(winnerPrizeImageSrc) {
-                    prizeHTML += `<img src="${winnerPrizeImageSrc}" class="max-w-full max-h-48 rounded-lg mx-auto mb-4">`;
+                const winnerImageSrc = loadedImages[startIndex] ? loadedImages[startIndex].src : '';
+
+                let prizeHTML = `<h3 class="text-3xl font-bold mb-4 text-rose-500">${winnerName}</h3>`;
+                if(winnerImageSrc) {
+                    prizeHTML += `<img src="${winnerImageSrc}" class="mx-auto mb-4 rounded-full border-4 border-rose-300" style="width: 80px; height: 80px; object-fit: contain; background-color: white;">`;
                 }
-                prizeHTML += `<p class="text-2xl font-bold">${prizeMessage}</p>`;
+                if(winnerPrizeImageSrc) {
+                    prizeHTML += `<img src="${winnerPrizeImageSrc}" class="max-w-full max-h-48 rounded-lg mx-auto mb-4" alt="당첨 상품">`;
+                }
+                prizeHTML += `<p class="text-xl text-gray-700">${prizeMessage}</p>`;
+                
                 elements.winnerPrizeDisplay.innerHTML = prizeHTML;
                 elements.winnerModal.classList.remove('hidden');
-                setTimeout(() => elements.winnerModal.classList.add('opacity-100'), 10);
+                setTimeout(() => elements.winnerModal.classList.remove('opacity-0'), 10);
                 playSpecialWinSound();
+            } 
+
+            const resultEl = document.createElement('div');
+            resultEl.className = 'result-box p-3 bg-white rounded-lg shadow flex justify-center items-center gap-4';
+            resultEl.textContent = `${playerNames[startIndex]} → ${resultNames[endIndex]}`;
+            elements.resultList.appendChild(resultEl);
+
+            if(endIndex === designatedWinnerEndIndex){
+                resultEl.classList.add('highlight', 'border-2', 'border-rose-400');
             }
-            elements.resultDisplay.classList.remove('hidden'); elements.shareButton.classList.remove('hidden');
-            const resultText = `${playerNames[startIndex]} ➔ ${resultNames[endIndex]}`;
-            if (!document.getElementById(`res-${startIndex}`)) {
-                const p = document.createElement('div'); p.id = `res-${startIndex}`;
-                p.className = 'result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm';
-                p.textContent = resultText; elements.resultList.appendChild(p);
-                setTimeout(() => p.classList.add('highlight'), 10);
-                if (resultNames[endIndex] && resultNames[endIndex].includes("당첨")) playWinSound();
+
+            if (runningAnimationCount === 0) {
+                elements.resultDisplay.classList.remove('hidden');
+                elements.shareButton.classList.remove('hidden');
             }
         };
 
-        elements.characterSizeSlider.addEventListener('input', (e) => {
-            characterSize = parseInt(e.target.value, 10); updatePreviewSizes();
-            if(gameStarted) drawFullFrame();
-        });
+        const initEventListeners = () => {
+            elements.addPlayer.addEventListener('click', () => updatePlayerCount(1));
+            elements.removePlayer.addEventListener('click', () => updatePlayerCount(-1));
+            elements.characterSizeSlider.addEventListener('input', (e) => {
+                characterSize = parseInt(e.target.value, 10);
+                updatePreviewSizes();
+                if (gameStarted) drawFullFrame();
+            });
+            elements.startButton.addEventListener('click', startGame);
+            elements.resetButton.addEventListener('click', resetGame);
+            elements.shareButton.addEventListener('click', shareResults);
+            elements.downloadButton.addEventListener('click', downloadHtmlFile);
+            
+            elements.backgroundInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        elements.captureArea.style.backgroundImage = `url('${event.target.result}')`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            elements.winnerFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if(file){
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        winnerPrizeImageSrc = event.target.result;
+                        elements.winnerFilePreview.src = winnerPrizeImageSrc;
+                        elements.winnerFilePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            elements.closeWinnerModal.addEventListener('click', () => {
+                elements.winnerModal.classList.add('opacity-0');
+                setTimeout(() => elements.winnerModal.classList.add('hidden'), 300);
+            });
+
+            window.addEventListener('resize', resizeCanvas);
+        };
         
-        elements.backgroundInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => { elements.captureArea.style.backgroundImage = `url('${event.target.result}')`; };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        elements.winnerFile.addEventListener('change', (e) => {
-             const file = e.target.files[0];
-             if(file) {
-                 const reader = new FileReader();
-                 reader.onload = (event) => {
-                     winnerPrizeImageSrc = event.target.result;
-                     elements.winnerFilePreview.src = winnerPrizeImageSrc;
-                     elements.winnerFilePreview.classList.remove('hidden');
-                 };
-                 reader.readAsDataURL(file);
-             }
-        });
-        elements.closeWinnerModal.addEventListener('click', () => {
-            elements.winnerModal.classList.remove('opacity-100');
-            setTimeout(() => elements.winnerModal.classList.add('hidden'), 300);
-        });
-
-        window.addEventListener('resize', resizeCanvas);
-        elements.startButton.addEventListener('click', startGame);
-        elements.shareButton.addEventListener('click', shareResults);
-        elements.downloadButton.addEventListener('click', downloadHtmlFile);
-        elements.resetButton.addEventListener('click', resetGame);
-        elements.addPlayer.addEventListener('click', () => updatePlayerCount(1));
-        elements.removePlayer.addEventListener('click', () => updatePlayerCount(-1));
-
+        // --- Initialize ---
+        initEventListeners();
         createInputs();
-        resetGame();
+
     </script>
 </body>
 </html>
