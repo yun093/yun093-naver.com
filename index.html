@@ -1,11 +1,13 @@
-<html lang="ko"><head>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>송산ts 사다리게임</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -23,7 +25,15 @@
             border-radius: 1rem;
             padding: 1.5rem;
         }
-        .input-item { display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: flex-end; flex-shrink: 0; width: 7rem; /* w-28 */ }
+        .input-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            justify-content: flex-end; 
+            flex-shrink: 0;
+            padding: 0 2px;
+        }
         .input-item.result { justify-content: flex-start; }
         .btn { transition: all 0.2s ease-in-out; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -48,21 +58,27 @@
         #winner-modal { transition: opacity 0.3s, transform 0.3s; }
         .winner-content { animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes zoomIn { from { transform: scale(0.5); } to { transform: scale(1); } }
-        /* 가로 스크롤 컨테이너 */
         .scroll-container {
             overflow-x: auto;
-            padding-bottom: 1rem; /* 스크롤바 공간 확보 */
+            padding-bottom: 1rem;
         }
-        /* 스크롤바 스타일 (선택 사항) */
-        .scroll-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb {
-            background-color: #a0aec0;
-            border-radius: 4px;
+        .scroll-container::-webkit-scrollbar { height: 8px; }
+        .scroll-container::-webkit-scrollbar-thumb { background-color: #a0aec0; border-radius: 4px; }
+        .file-label {
+            font-size: 12px; /* 기본값 */
+            padding: 4px 6px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            white-space: nowrap; /* 글자가 줄바꿈되지 않도록 */
+            overflow: hidden; /* 넘치는 부분 숨김 */
+            text-overflow: ellipsis; /* 넘치는 부분 ... 처리 */
+            display: inline-block;
+            max-width: 100%;
         }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.mx-auto{margin-left:auto;margin-right:auto}.mb-4{margin-bottom:1rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mb-1{margin-bottom:0.25rem}.flex{display:flex}.hidden{display:none}.h-64{height:16rem}.max-h-24{max-height:6rem}.min-h-screen{min-height:100vh}.w-12{width:3rem}.w-full{width:100%}.w-24{width:6rem}.max-w-4xl{max-width:56rem}.max-w-sm{max-width:24rem}.flex-grow{flex-grow:1}.cursor-pointer{cursor:pointer}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-2{border-width:2px}.border-dashed{border-style:dashed}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-rose-300{--tw-border-opacity:1;border-color:rgb(253 164 175 / var(--tw-border-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-500{--tw-bg-opacity:1;background-color:rgb(107 114 128 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-rose-100{--tw-bg-opacity:1;background-color:rgb(255 228 230 / var(--tw-bg-opacity, 1))}.bg-teal-500{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-opacity-70{--tw-bg-opacity:0.7}.p-4{padding:1rem}.p-2{padding:0.5rem}.p-8{padding:2rem}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-rose-500{--tw-text-opacity:1;color:rgb(244 63 94 / var(--tw-text-opacity, 1))}.text-rose-700{--tw-text-opacity:1;color:rgb(190 18 60 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-100{opacity:1}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:bg-gray-400:hover{--tw-bg-opacity:1;background-color:rgb(156 163 175 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-green-600:hover{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.hover\:bg-teal-600:hover{--tw-bg-opacity:1;background-color:rgb(13 148 136 / var(--tw-bg-opacity, 1))}.hover\:bg-yellow-600:hover{--tw-bg-opacity:1;background-color:rgb(202 138 4 / var(--tw-bg-opacity, 1))}@media (min-width: 640px){.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:h-96{height:24rem}.md\:w-auto{width:auto}.md\:flex-row{flex-direction:row}.md\:text-4xl{font-size:2.25rem;line-height:2.5rem}}</style></head>
+</head>
 <body class="bg-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
 
     <div id="capture-area" class="w-full max-w-4xl mx-auto shadow-lg">
@@ -74,155 +90,65 @@
             <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-4 p-4 bg-gray-100 rounded-lg">
                 <div class="flex items-center gap-4">
                     <label class="font-medium text-gray-700">인원:</label>
-                    <button id="remove-player" class="btn bg-red-500 text-white font-bold py-2 px-4 rounded-lg" disabled="">-</button>
-                    <span id="player-count" class="text-lg font-medium text-gray-700 w-12 text-center">24명</span>
-                    <button id="add-player" class="btn bg-blue-500 text-white font-bold py-2 px-4 rounded-lg" disabled="">+</button>
+                    <button id="remove-player" class="btn bg-red-500 text-white font-bold py-2 px-4 rounded-lg">-</button>
+                    <span id="player-count" class="text-lg font-medium text-gray-700 w-12 text-center">4명</span>
+                    <button id="add-player" class="btn bg-blue-500 text-white font-bold py-2 px-4 rounded-lg">+</button>
                 </div>
                 <div class="flex items-center gap-3 w-full md:w-auto">
                      <label for="characterSize" class="font-medium text-gray-700">크기:</label>
-                     <input type="range" id="characterSize" min="10" max="50" value="30" class="w-full" disabled="">
+                     <input type="range" id="characterSize" min="10" max="50" value="30" class="w-full">
                 </div>
                  <div>
                     <label for="background-input" class="btn bg-white text-gray-700 font-bold py-2 px-4 rounded-lg cursor-pointer">🖼️ 배경 변경</label>
-                    <input type="file" id="background-input" class="hidden" accept="image/*" disabled="">
+                    <input type="file" id="background-input" class="hidden" accept="image/*">
                 </div>
             </div>
             
             <fieldset class="border-2 border-dashed border-rose-300 p-4 rounded-lg mb-4">
                 <legend class="px-2 text-lg font-semibold text-rose-500">🎉 당첨자 설정</legend>
-                <div class="flex flex-col sm:flex-row items-center gap-4">
-                    <select id="winner-select" class="p-2 border border-gray-300 rounded-md"><option value="0">참여자 1</option><option value="1">참여자 2</option><option value="2">참여자 3</option><option value="3">참여자 4</option><option value="4">참여자 5</option><option value="5">참여자 6</option><option value="6">참여자 7</option><option value="7">참여자 8</option><option value="8">참여자 9</option><option value="9">참여자 10</option><option value="10">참여자 11</option><option value="11">참여자 12</option><option value="12">참여자 13</option><option value="13">참여자 14</option><option value="14">참여자 15</option><option value="15">참여자 16</option><option value="16">참여자 17</option><option value="17">참여자 18</option><option value="18">참여자 19</option><option value="19">참여자 20</option><option value="20">참여자 21</option><option value="21">참여자 22</option><option value="22">참여자 23</option><option value="23">참여자 24</option></select>
-                    <input type="text" id="winner-message" placeholder="당첨 메시지 (기본: 축하합니다!)" class="flex-grow p-2 border border-gray-300 rounded-md" disabled="">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
+                    <label class="font-medium">누가:</label>
+                    <select id="winner-select" class="p-2 border border-gray-300 rounded-md"></select>
+                    <label class="font-medium">어디에:</label>
+                    <select id="target-result-select" class="p-2 border border-gray-300 rounded-md"></select>
+                    <label class="font-medium">도착할까요?</label>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-4 mt-4">
+                    <input type="text" id="winner-message" placeholder="당첨 메시지 (예: 축하합니다!)" class="flex-grow p-2 border border-gray-300 rounded-md">
                     <label for="winner-file" class="btn bg-rose-100 text-rose-700 text-sm font-bold py-2 px-3 rounded-lg cursor-pointer">🎁 당첨 이미지</label>
-                    <input type="file" id="winner-file" class="hidden" accept="image/*" disabled="">
+                    <input type="file" id="winner-file" class="hidden" accept="image/*">
                 </div>
                 <img id="winner-file-preview" class="hidden mx-auto mt-2 max-h-24 rounded-md">
             </fieldset>
 
             <div class="scroll-container">
-                <div id="player-inputs" class="flex items-end gap-4"><div class="input-item">
-                    <img id="preview-0" src="https://i.postimg.cc/mkc5LMpK/ts.jpg" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player0" type="text" value="참여자 1" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-0" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-1" src="https://i.postimg.cc/zvKTFSdC/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player1" type="text" value="참여자 2" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-1" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-2" src="https://i.postimg.cc/wxm5zg61/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player2" type="text" value="참여자 3" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-2" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-3" src="https://i.postimg.cc/m23Qcj1R/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player3" type="text" value="참여자 4" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-3" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-4" src="https://i.postimg.cc/8PgRP95t/01-11.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player4" type="text" value="참여자 5" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-4" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-5" src="https://i.postimg.cc/13JwBzKj/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player5" type="text" value="참여자 6" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-5" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-6" src="https://i.postimg.cc/bv5bXFW0/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player6" type="text" value="참여자 7" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-6" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-7" src="https://i.postimg.cc/cJCYbN94/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player7" type="text" value="참여자 8" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-7" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-8" src="https://i.postimg.cc/CxFbb8b8/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player8" type="text" value="참여자 9" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-8" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-9" src="https://i.postimg.cc/RFntvLxk/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player9" type="text" value="참여자 10" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-9" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-10" src="https://i.postimg.cc/rs1trymg/03.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player10" type="text" value="참여자 11" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-10" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-11" src="https://i.postimg.cc/0jRwjK8b/ts112.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player11" type="text" value="참여자 12" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-11" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-12" src="https://i.postimg.cc/mkc5LMpK/ts.jpg" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player12" type="text" value="참여자 13" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-12" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-13" src="https://i.postimg.cc/zvKTFSdC/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player13" type="text" value="참여자 14" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-13" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-14" src="https://i.postimg.cc/wxm5zg61/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player14" type="text" value="참여자 15" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-14" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-15" src="https://i.postimg.cc/m23Qcj1R/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player15" type="text" value="참여자 16" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-15" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-16" src="https://i.postimg.cc/8PgRP95t/01-11.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player16" type="text" value="참여자 17" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-16" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-17" src="https://i.postimg.cc/13JwBzKj/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player17" type="text" value="참여자 18" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-17" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-18" src="https://i.postimg.cc/bv5bXFW0/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player18" type="text" value="참여자 19" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-18" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-19" src="https://i.postimg.cc/cJCYbN94/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player19" type="text" value="참여자 20" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-19" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-20" src="https://i.postimg.cc/CxFbb8b8/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player20" type="text" value="참여자 21" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-20" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-21" src="https://i.postimg.cc/RFntvLxk/01.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player21" type="text" value="참여자 22" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-21" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-22" src="https://i.postimg.cc/rs1trymg/03.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player22" type="text" value="참여자 23" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-22" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div><div class="input-item">
-                    <img id="preview-23" src="https://i.postimg.cc/0jRwjK8b/ts112.png" class="preview-img" crossorigin="anonymous" style="width: 56px; height: 56px;">
-                    <input id="player23" type="text" value="참여자 24" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1" disabled="">
-                    <input id="char-file-23" type="file" accept="image/*" class="file-input w-24" disabled="">
-                </div></div>
+                <div id="player-inputs" class="flex items-end"></div>
             </div>
 
             <div class="relative mt-2">
-                <canvas id="ladderCanvas" class="w-full h-64 md:h-96 rounded-lg" width="848" height="384"></canvas>
-                <div id="winner-modal" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center pointer-events-none opacity-0 hidden">
+                <canvas id="ladderCanvas" class="w-full h-64 md:h-96 rounded-lg"></canvas>
+                <div id="winner-modal" class="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden pointer-events-none opacity-0">
                     <div class="winner-content bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm" style="transform: scale(0.5);">
-                        <div id="winner-prize-display"><p class="text-2xl font-bold">축하합니다! 당첨!</p></div>
+                        <div id="winner-prize-display"></div>
                         <button id="close-winner-modal" class="mt-6 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-full pointer-events-auto">닫기</button>
                     </div>
                 </div>
             </div>
 
             <div class="scroll-container mt-2">
-                <div id="result-inputs" class="flex items-start gap-4"><div class="input-item result"><input id="result0" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result1" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result2" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result3" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result4" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result5" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result6" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result7" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result8" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result9" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result10" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result11" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result12" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result13" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result14" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result15" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result16" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result17" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result18" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result19" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result20" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result21" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result22" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div><div class="input-item result"><input id="result23" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm" disabled=""></div></div>
+                <div id="result-inputs" class="flex items-start"></div>
             </div>
             
             <div class="flex flex-wrap justify-center items-center gap-4 mt-6">
-                <button id="startButton" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hidden" disabled=""><span>로딩중...</span></button>
+                <button id="startButton" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg">🚀 시작하기</button>
                 <button id="resetButton" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg text-lg">🔄 다시하기</button>
-                <button id="shareButton" class="btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg text-lg">🔗 공유하기</button>
+                <button id="shareButton" class="btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg text-lg hidden">🔗 공유하기</button>
                 <button id="downloadButton" class="btn bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-lg text-lg">📥 HTML 다운로드</button>
             </div>
             
-            <div id="result-display" class="mt-8 text-center">
+            <div id="result-display" class="mt-8 text-center hidden">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">게임 결과</h2>
-                <div id="result-list" class="space-y-2"><div id="res-14" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 15 ➔ 꽝</div><div id="res-18" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 19 ➔ 꽝</div><div id="res-23" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 24 ➔ 꽝</div><div id="res-2" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 3 ➔ 꽝</div><div id="res-8" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 9 ➔ 꽝</div><div id="res-22" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 23 ➔ 꽝</div><div id="res-12" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 13 ➔ 꽝</div><div id="res-9" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 10 ➔ 꽝</div><div id="res-11" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 12 ➔ 꽝</div><div id="res-19" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 20 ➔ 꽝</div><div id="res-6" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 7 ➔ 꽝</div><div id="res-13" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 14 ➔ 꽝</div><div id="res-16" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 17 ➔ 꽝</div><div id="res-17" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 18 ➔ 꽝</div><div id="res-3" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 4 ➔ 꽝</div><div id="res-4" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 5 ➔ 꽝</div><div id="res-5" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 6 ➔ 꽝</div><div id="res-7" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 8 ➔ 꽝</div><div id="res-15" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 16 ➔ 꽝</div><div id="res-21" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 22 ➔ 꽝</div><div id="res-10" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 11 ➔ 당첨</div><div id="res-0" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 1 ➔ 꽝</div><div id="res-20" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 21 ➔ 꽝</div><div id="res-1" class="result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm highlight">참여자 2 ➔ 꽝</div></div>
+                <div id="result-list" class="space-y-2"></div>
             </div>
         </div>
     </div>
@@ -239,6 +165,7 @@
             shareButton: document.getElementById('shareButton'), downloadButton: document.getElementById('downloadButton'),
             backgroundInput: document.getElementById('background-input'), toast: document.getElementById('toast'),
             captureArea: document.getElementById('capture-area'), winnerSelect: document.getElementById('winner-select'),
+            targetResultSelect: document.getElementById('target-result-select'), // [NEW] 결과 선택 드롭다운
             winnerMessage: document.getElementById('winner-message'), winnerFile: document.getElementById('winner-file'),
             winnerFilePreview: document.getElementById('winner-file-preview'), winnerModal: document.getElementById('winner-modal'),
             winnerPrizeDisplay: document.getElementById('winner-prize-display'), closeWinnerModal: document.getElementById('close-winner-modal'),
@@ -248,15 +175,13 @@
         let playerCount = 4, ladder, playerNames, resultNames, results, verticalLines;
         let horizontalLines = [], loadedImages = {}, runningAnimations = [];
         let gameStarted = false, characterSize = 30, runningAnimationCount = 0, winnerPrizeImageSrc = null;
-        let animationFrameId = null;
+        let animationFrameId = null, designatedWinnerEndIndex = -1;
 
         const DEFAULT_CHARACTER_IMAGES = [
-            'https://i.postimg.cc/mkc5LMpK/ts.jpg', 'https://i.postimg.cc/zvKTFSdC/01.png',
-            'https://i.postimg.cc/wxm5zg61/01.png', 'https://i.postimg.cc/m23Qcj1R/01.png',
-            'https://i.postimg.cc/8PgRP95t/01-11.png', 'https://i.postimg.cc/13JwBzKj/01.png',
-            'https://i.postimg.cc/bv5bXFW0/01.png', 'https://i.postimg.cc/cJCYbN94/01.png',
-            'https://i.postimg.cc/CxFbb8b8/01.png', 'https://i.postimg.cc/RFntvLxk/01.png',
-            'https://i.postimg.cc/rs1trymg/03.png', 'https://i.postimg.cc/0jRwjK8b/ts112.png'
+            'https://i.postimg.cc/mkc5LMpK/ts.jpg', 'https://i.postimg.cc/zvKTFSdC/01.png', 'https://i.postimg.cc/wxm5zg61/01.png',
+            'https://i.postimg.cc/m23Qcj1R/01.png', 'https://i.postimg.cc/8PgRP95t/01-11.png', 'https://i.postimg.cc/13JwBzKj/01.png',
+            'https://i.postimg.cc/bv5bXFW0/01.png', 'https://i.postimg.cc/cJCYbN94/01.png', 'https://i.postimg.cc/CxFbb8b8/01.png',
+            'https://i.postimg.cc/RFntvLxk/01.png', 'https://i.postimg.cc/rs1trymg/03.png', 'https://i.postimg.cc/0jRwjK8b/ts112.png'
         ];
 
         const synth = typeof Tone !== 'undefined' ? new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination() : null;
@@ -269,30 +194,60 @@
             });
         };
         
-        const getLadderX = (index) => (elements.canvas.clientWidth / playerCount) * index + (elements.canvas.clientWidth / playerCount / 2);
+        const getLadderX = (index) => {
+            const gap = 4;
+            const totalGapWidth = (playerCount - 1) * gap;
+            const columnWidth = (elements.canvas.clientWidth - totalGapWidth) / playerCount;
+            return index * (columnWidth + gap) + columnWidth / 2;
+        };
         
         const resizeCanvas = () => {
             const dpr = window.devicePixelRatio || 1;
             const rect = elements.canvas.getBoundingClientRect();
-            elements.canvas.width = rect.width * dpr; elements.canvas.height = rect.height * dpr;
+            elements.canvas.width = rect.width * dpr;
+            elements.canvas.height = rect.height * dpr;
             ctx.scale(dpr, dpr);
+            
+            // [FIX] 간격을 고려한 너비 계산 및 폰트 자동 조절
+            const gap = 4; // 항목 간 간격 (px)
+            const totalGapWidth = (playerCount - 1) * gap;
+            const columnWidth = (elements.canvas.clientWidth - totalGapWidth) / playerCount;
+            
+            elements.playerInputs.style.gap = `${gap}px`;
+            elements.resultInputs.style.gap = `${gap}px`;
+
+            document.querySelectorAll('.input-item').forEach(item => {
+                item.style.width = `${columnWidth}px`;
+            });
+
+            const baseFontSize = 14; 
+            const baseWidth = 90; 
+            let newFontSize = Math.floor(baseFontSize * (columnWidth / baseWidth));
+            newFontSize = Math.max(9, Math.min(baseFontSize, newFontSize)); 
+            
+            document.querySelectorAll('.input-item input[type="text"], .file-label').forEach(input => {
+                input.style.fontSize = `${newFontSize}px`;
+            });
+
             if (gameStarted) drawFullFrame();
         };
 
         const createInputs = () => {
             elements.playerInputs.innerHTML = ''; elements.resultInputs.innerHTML = '';
-            elements.winnerSelect.innerHTML = '';
+            elements.winnerSelect.innerHTML = ''; elements.targetResultSelect.innerHTML = '';
             
             for (let i = 0; i < playerCount; i++) {
                 const defaultImage = DEFAULT_CHARACTER_IMAGES[i % DEFAULT_CHARACTER_IMAGES.length];
                 const playerName = `참여자 ${i + 1}`;
-                
+                const resultName = "꽝";
+
                 const playerDiv = document.createElement('div');
                 playerDiv.className = 'input-item';
                 playerDiv.innerHTML = `
                     <img id="preview-${i}" src="${defaultImage}" class="preview-img" crossorigin="anonymous">
-                    <input id="player${i}" type="text" value="${playerName}" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm mb-1">
-                    <input id="char-file-${i}" type="file" accept="image/*" class="file-input w-24">
+                    <input id="player${i}" type="text" value="${playerName}" class="w-full text-center p-1 border border-gray-300 rounded-md text-sm mb-1">
+                    <label for="char-file-${i}" class="file-label">📂 파일 선택</label>
+                    <input id="char-file-${i}" type="file" accept="image/*" class="hidden">
                 `;
                 elements.playerInputs.appendChild(playerDiv);
 
@@ -306,29 +261,42 @@
                     }
                 });
                  
-                playerDiv.querySelector(`#player${i}`).addEventListener('input', (e) => {
+                const playerInputEl = playerDiv.querySelector(`#player${i}`);
+                playerInputEl.addEventListener('input', (e) => {
                     const optionToUpdate = elements.winnerSelect.querySelector(`option[value="${i}"]`);
-                    if (optionToUpdate) {
-                        optionToUpdate.textContent = e.target.value || `참여자 ${i + 1}`;
-                    }
+                    if (optionToUpdate) optionToUpdate.textContent = e.target.value || `참여자 ${i + 1}`;
                 });
 
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'input-item result';
-                resultDiv.innerHTML = `<input id="result${i}" type="text" value="꽝" class="w-24 text-center p-1 border border-gray-300 rounded-md text-sm">`;
+                resultDiv.innerHTML = `<input id="result${i}" type="text" value="${resultName}" class="w-full text-center p-1 border border-gray-300 rounded-md text-sm">`;
                 elements.resultInputs.appendChild(resultDiv);
 
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = playerName;
-                elements.winnerSelect.appendChild(option);
+                const resultInputEl = resultDiv.querySelector(`#result${i}`);
+                resultInputEl.addEventListener('input', (e) => {
+                    const optionToUpdate = elements.targetResultSelect.querySelector(`option[value="${i}"]`);
+                    if (optionToUpdate) optionToUpdate.textContent = e.target.value || `결과 ${i + 1}`;
+                });
+
+                const winnerOption = document.createElement('option');
+                winnerOption.value = i; winnerOption.textContent = playerName;
+                elements.winnerSelect.appendChild(winnerOption);
+                
+                const targetOption = document.createElement('option');
+                targetOption.value = i; targetOption.textContent = resultName;
+                elements.targetResultSelect.appendChild(targetOption);
+            }
+            // [MODIFIED] 가운데를 '당첨'으로 고정하는 로직 대신, 사용자가 직접 결과를 입력하도록 함
+            if (playerCount > 1) {
+                const midIndex = Math.floor(playerCount / 2);
+                document.getElementById(`result${midIndex}`).value = "당첨";
+                const option = elements.targetResultSelect.querySelector(`option[value="${midIndex}"]`);
+                if(option) option.textContent = "당첨";
+                elements.targetResultSelect.value = midIndex;
             }
 
-            if (playerCount > 1) {
-                const winnerIndex = Math.floor(playerCount / 2);
-                document.getElementById(`result${winnerIndex}`).value = "당첨";
-            }
             updatePreviewSizes();
+            resizeCanvas(); 
         };
 
         const updatePlayerCount = (change) => {
@@ -349,43 +317,54 @@
         };
         
         const showToast = (message) => {
-            elements.toast.textContent = message; elements.toast.classList.add('show');
-            setTimeout(() => { elements.toast.classList.remove('show'); }, 3000);
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
         };
         
         const getDrawableHeight = () => elements.canvas.clientHeight - characterSize;
-
+        
         const generateLadder = () => {
             verticalLines = playerCount;
             const drawableHeight = getDrawableHeight();
             const horizontalSteps = Math.floor(drawableHeight / 25);
             horizontalLines = [];
             const ladderData = Array(verticalLines).fill(0).map(() => Array(horizontalSteps).fill(0));
+        
+            // [MODIFIED] '누가', '어디에' 드롭다운 값을 기준으로 경로 생성
             const winnerStartIndex = parseInt(elements.winnerSelect.value, 10);
-            const winnerEndIndex = Math.floor(playerCount / 2);
+            const winnerEndIndex = parseInt(elements.targetResultSelect.value, 10);
             
-            let pathX = winnerStartIndex;
-            let neededMoves = winnerEndIndex - winnerStartIndex;
-            const availableY = Array.from({length: horizontalSteps-2}, (_, i) => i + 1).sort(() => 0.5 - Math.random());
+            const availableY = Array.from({length: horizontalSteps - 2}, (_, i) => i + 1).sort(() => 0.5 - Math.random());
             
-            while (neededMoves !== 0 && availableY.length > 0) {
-                const y = availableY.pop();
-                const direction = neededMoves > 0 ? 1 : -1;
-                const nextX = pathX + direction;
-                if (nextX >= 0 && nextX < verticalLines) {
-                    if (ladderData[pathX][y] === 0 && ladderData[nextX][y] === 0) {
-                        ladderData[pathX][y] = direction;
+            let currentX = winnerStartIndex;
+            let movesNeeded = winnerEndIndex - currentX;
+            const direction = Math.sign(movesNeeded);
+
+            if (direction !== 0) {
+                for (const y of availableY) {
+                    if (movesNeeded === 0) break;
+                    const nextX = currentX + direction;
+                    if (ladderData[currentX][y] === 0 && ladderData[nextX] && ladderData[nextX][y] === 0) {
+                        ladderData[currentX][y] = direction;
                         ladderData[nextX][y] = -direction;
-                        pathX = nextX;
-                        neededMoves -= direction;
+                        currentX = nextX;
+                        movesNeeded -= direction;
                     }
                 }
             }
-            
+
             for (let y = 1; y < horizontalSteps - 1; y++) {
                 for (let x = 0; x < verticalLines - 1; x++) {
-                    if (ladderData[x][y] === 0 && ladderData[x+1][y] === 0 && Math.random() > 0.6) {
-                        ladderData[x][y] = 1; ladderData[x+1][y] = -1;
+                    if (ladderData[x][y] === 0 && ladderData[x + 1][y] === 0) {
+                        const isNeighborSafe = (y > 0 ? ladderData[x][y - 1] === 0 && ladderData[x + 1][y - 1] === 0 : true) &&
+                                               (y < horizontalSteps -1 ? ladderData[x][y + 1] === 0 && ladderData[x + 1][y + 1] === 0 : true);
+                        if (isNeighborSafe && Math.random() > 0.65) {
+                            ladderData[x][y] = 1;
+                            ladderData[x + 1][y] = -1;
+                        }
                     }
                 }
             }
@@ -399,13 +378,13 @@
             }
             return ladderData;
         };
-        
+
         const calculateResults = () => {
             results = Array.from({length: verticalLines}, (_, i) => {
                 let currentX = i;
                 for (let y = 0; y < ladder[0].length; y++) {
-                    if (ladder[currentX][y] === 1) currentX++;
-                    else if (ladder[currentX][y] === -1) currentX--;
+                    if (ladder[currentX] && ladder[currentX][y] === 1) currentX++;
+                    else if (ladder[currentX] && ladder[currentX][y] === -1) currentX--;
                 }
                 return currentX;
             });
@@ -414,8 +393,12 @@
         const drawLadder = () => {
             ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
             ctx.lineWidth = 4; ctx.strokeStyle = '#60a5fa'; 
+            const gap = 4;
+            const totalGapWidth = (playerCount - 1) * gap;
+            const columnWidth = (elements.canvas.clientWidth - totalGapWidth) / playerCount;
+
             for (let i = 0; i < verticalLines; i++) {
-                const x = getLadderX(i);
+                const x = i * (columnWidth + gap) + columnWidth / 2;
                 ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, getDrawableHeight()); ctx.stroke();
             }
             horizontalLines.forEach(line => {
@@ -429,13 +412,14 @@
             if (gameStarted) return;
             playerNames = Array.from({length: playerCount}, (_, i) => document.getElementById(`player${i}`).value);
             resultNames = Array.from({length: playerCount}, (_, i) => document.getElementById(`result${i}`).value);
+            designatedWinnerEndIndex = parseInt(elements.targetResultSelect.value, 10); // [NEW] 당첨 결과 위치 저장
             elements.startButton.innerHTML = "<span>로딩중...</span>"; elements.startButton.disabled = true;
 
             const onImagesReady = () => {
                 gameStarted = true; resizeCanvas();
                 ladder = generateLadder(); calculateResults(); drawLadder();
                 elements.startButton.classList.add('hidden');
-                document.querySelectorAll('input, button').forEach(el => {
+                document.querySelectorAll('input, button, select').forEach(el => {
                     if(!['resetButton', 'shareButton', 'downloadButton', 'close-winner-modal'].includes(el.id)) el.disabled = true;
                 });
                 runAllAnimations();
@@ -479,7 +463,7 @@
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
-            gameStarted = false; runningAnimationCount = 0; runningAnimations = [];
+            gameStarted = false; runningAnimationCount = 0; runningAnimations = []; designatedWinnerEndIndex = -1;
             ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
             results = null; ladder = null; horizontalLines = [];
             elements.resultList.innerHTML = ''; elements.resultDisplay.classList.add('hidden');
@@ -487,7 +471,7 @@
             elements.startButton.classList.remove('hidden');
             elements.startButton.innerHTML = "🚀 시작하기";
             elements.startButton.disabled = false;
-            document.querySelectorAll('input, button').forEach(el => el.disabled = false);
+            document.querySelectorAll('input, button, select').forEach(el => el.disabled = false);
             createInputs();
         };
         
@@ -519,15 +503,10 @@
             const drawableHeight = getDrawableHeight();
             
             const pathTracer = {
-                startIndex,
-                x: getLadderX(startIndex),
-                y: 0,
-                color: `hsl(${startIndex * 360 / playerCount}, 90%, 60%)`,
-                currentXIndex: startIndex,
-                speed: drawableHeight / 120,
-                state: 'down',
-                pathLog: [{x: getLadderX(startIndex), y: 0}],
-                image: loadedImages[startIndex],
+                startIndex, x: getLadderX(startIndex), y: 0,
+                color: `hsl(${startIndex * 360 / playerCount}, 90%, 60%)`, currentXIndex: startIndex,
+                speed: drawableHeight / 120, state: 'down',
+                pathLog: [{x: getLadderX(startIndex), y: 0}], image: loadedImages[startIndex],
                 isFinished: false,
 
                 update() {
@@ -553,9 +532,7 @@
                         if(this.y >= targetY) {
                             this.y = targetY;
                             this.pathLog.push({ x: this.x, y: this.y });
-                            if (this.y < drawableHeight) {
-                                this.state = 'across';
-                            }
+                            if (this.y < drawableHeight) this.state = 'across';
                         }
                     } else if (this.state === 'across') {
                         const currentYIndex = Math.round(((this.y / ladderYStep) - 1.5));
@@ -570,8 +547,7 @@
                         }
                     }
                     if (this.y >= drawableHeight) {
-                        this.y = drawableHeight;
-                        this.isFinished = true;
+                        this.y = drawableHeight; this.isFinished = true;
                         runningAnimationCount--;
                         displayResult(this.startIndex, this.currentXIndex);
                     }
@@ -581,9 +557,7 @@
                     ctx.strokeStyle = this.color; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.lineJoin = "round";
                     ctx.beginPath();
                     ctx.moveTo(this.pathLog[0].x, this.pathLog[0].y);
-                    for (let i = 1; i < this.pathLog.length; i++) {
-                        ctx.lineTo(this.pathLog[i].x, this.pathLog[i].y);
-                    }
+                    for (let i = 1; i < this.pathLog.length; i++) ctx.lineTo(this.pathLog[i].x, this.pathLog[i].y);
                     ctx.lineTo(this.x, this.y);
                     ctx.stroke();
                 },
@@ -600,14 +574,14 @@
         };
 
         const displayResult = (startIndex, endIndex) => {
-            const winnerEndIndex = Math.floor(playerCount / 2);
-            if(endIndex === winnerEndIndex) {
-                let prizeHTML = '';
+            if(endIndex === designatedWinnerEndIndex) {
+                const winnerName = playerNames[startIndex];
+                const prizeMessage = elements.winnerMessage.value || '축하합니다! 당첨!';
+                let prizeHTML = `<h3 class="text-3xl font-bold mb-2 text-rose-500">${winnerName}</h3>`;
                 if(winnerPrizeImageSrc) {
-                    prizeHTML = `<img src="${winnerPrizeImageSrc}" class="max-w-full max-h-48 rounded-lg mx-auto mb-4">`;
+                    prizeHTML += `<img src="${winnerPrizeImageSrc}" class="max-w-full max-h-48 rounded-lg mx-auto mb-4">`;
                 }
-                const message = elements.winnerMessage.value || '축하합니다! 당첨!';
-                prizeHTML += `<p class="text-2xl font-bold">${message}</p>`;
+                prizeHTML += `<p class="text-2xl font-bold">${prizeMessage}</p>`;
                 elements.winnerPrizeDisplay.innerHTML = prizeHTML;
                 elements.winnerModal.classList.remove('hidden');
                 setTimeout(() => elements.winnerModal.classList.add('opacity-100'), 10);
@@ -620,7 +594,7 @@
                 p.className = 'result-box text-lg p-3 bg-gray-100 rounded-lg shadow-sm';
                 p.textContent = resultText; elements.resultList.appendChild(p);
                 setTimeout(() => p.classList.add('highlight'), 10);
-                if (resultNames[endIndex].includes("당첨")) playWinSound();
+                if (resultNames[endIndex] && resultNames[endIndex].includes("당첨")) playWinSound();
             }
         };
 
@@ -666,5 +640,5 @@
         createInputs();
         resetGame();
     </script>
-
-</body></html>
+</body>
+</html>
